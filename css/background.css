@@ -1,0 +1,101 @@
+/* Fonds de pantalla */
+body.bg-default {
+    background-image: url('../img/backgrounds/dark1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+body.bg-dark2 {
+    background-image: url('../img/backgrounds/dark2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+body.bg-dark3 {
+    background-image: url('../img/backgrounds/dark3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+body.bg-light {
+    background-image: url('../img/backgrounds/light1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+/* Index */
+body.bg-default_index {
+    background-image: url('../img/backgrounds/dark1_index.PNG');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-color: white;
+}
+
+body.bg-dark2_index {
+    background-image: url('../img/backgrounds/dark2_index.PNG');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-color: white;
+}
+
+body.bg-dark3_index {
+    background-image: url('../img/backgrounds/dark3_index.PNG');
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-color: white; 
+}
+
+body.bg-light_index {
+    background-image: url('../img/backgrounds/light1_index.PNG');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-color: white;
+}
+
+/* Clases para las vistas previas en la tienda */
+.bg-default {
+    background-image: url('../img/backgrounds/dark1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bg-dark2 {
+    background-image: url('../img/backgrounds/dark2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bg-dark3 {
+    background-image: url('../img/backgrounds/dark3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bg-light {
+    background-image: url('../img/backgrounds/light1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

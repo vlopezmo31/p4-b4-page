@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulari de Contacte</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('img/DopaTask.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .formulari {
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.8); 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="formulari">
+        <h2>Formulari de Contacte</h2>
+        <form action="enviar.php" method="post" onsubmit="return redirigir()">
+            <label for="nom">Nom:</label>
+            <input type="text" id="nom" name="nom" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="missatge">Missatge:</label>
+            <textarea id="missatge" name="missatge" rows="4" required></textarea>
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        function redirigir() {
+            alert("Formulari enviat correctament!");
+            window.history.back(); // Vuelve a la página anterior
+            return false;  
+        }
+    </script>
+</body>
+</html>

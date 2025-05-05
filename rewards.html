@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DopaTask - Recompenses</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Boxicons CSS -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Estils personalitzats -->
+  <link rel="stylesheet" href="css/rewards.css">
+  <!-- Fons personalitzat -->
+  <link rel="stylesheet" href="css/background.css">
+</head>
+<body>
+  <div id="rewardsApp" class="container-fluid">
+    <div class="row">
+      <!-- Sidebar Component -->
+      <sidebar-component current-page="rewards" :selected-mascot="selectedMascot" :mascot-message="mascotMessage"></sidebar-component>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- User Profile and Points Summary -->
+        <div class="section">
+          <div class="d-flex align-items-center">
+            <div class="drop-zone" @dragover.prevent="handleDragOver" @dragenter.prevent="handleDragEnter" @dragleave.prevent="handleDragLeave" @drop.prevent="handleDrop" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+              <img :src="profileImage" alt="User Icon" class="rounded-circle">
+              <div class="drop-zone-text" v-show="isDragging || isHovering">
+                {{ profileImage === '/img/placeholder_user_icon.png' ? 'Arrossegar i deixar anar una imatge' : 'Arrossega i deixa anar per canviar' }}
+              </div>
+            </div>
+            <div class="ms-3">
+              <div class="d-flex align-items-center">
+                <h5 v-if="!editingName">{{ userName }}</h5>
+                <input v-else type="text" v-model="tempName" class="form-control me-2" style="width: auto;">
+                <button v-if="!editingName" class="btn-edit" @click="editName">Editar</button>
+                <button v-else class="btn-guardar" @click="saveName">Desar</button>
+              </div>
+              <p><i class="fas fa-star"></i> Total DopaCoins: <span class="badge bg-primary">{{ points }} Dopacoins</span></p>
+              <p>Racha: 3 setmanes</p>
+            
+            </div>
+          </div>
+        </div>
+
+        <!-- Objective Section -->
+        <div class="section position-relative">
+          <div>
+            <h4>Objectiu: {{ userGoal }} DopaCoins</h4>
+            <div class="progress mt-3" style="height: 30px;">
+              <div class="progress-bar" role="progressbar" :style="{ width: goalProgress + '%' }" :aria-valuenow="goalProgress" aria-valuemin="0" aria-valuemax="100">
+                {{ points }} DopaCoins
+              </div>
+            </div>
+          </div>
+          <div class="position-absolute bottom-0 end-0">
+            <p>Data límit: {{ goalDate }}</p>
+          </div>
+          <button class="btn-editar" @click="showGoalModal">Editar</button>
+        </div>
+
+        <!-- Goal Modal -->
+        <div class="modal fade" id="goalModal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Establir objectiu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="mb-3">
+                    <label for="goalPoints" class="form-label">Objectiu (DopaCoins)</label>
+                    <input type="number" class="form-control" id="goalPoints" v-model.number="newGoal.points" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="goalDate" class="form-label">Data límit</label>
+                    <input type="text" class="form-control" id="goalDate" v-model="newGoal.date" placeholder="ex. 01/05/25" required>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn-close" data-bs-dismiss="modal">Tancar</button>
+                <button type="button" class="btn-desar" @click="saveGoal">Desar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly/Monthly Performance Graph -->
+        <div class="section">
+          <h3>Estadístiques de rendiment</h3>
+          <div class="chart-controls mb-3 text-center">
+            <button class="btn-filtre1" :class="{ active: chartView === 'weekly' }" :disabled="chartView === 'weekly'" @click="updateChart('weekly')">Setmanal</button>
+            <button class="btn-filtre2" :class="{ active: chartView === 'monthly' }" :disabled="chartView === 'monthly'" @click="updateChart('monthly')">Mensual</button>
+          </div>
+          <canvas id="performanceChart" style="max-width: 600px; margin: 0 auto;"></canvas>
+        </div>
+
+        <!-- Store Section -->
+        <div class="section">
+          <h3>Items a desbloquejar</h3>
+          <!-- Mascotes -->
+          <div class="store-category">
+            <h4 class="category-title">Mascotes:</h4>
+            <div class="store-items">
+              <div class="store-item" v-for="mascot in mascots" :key="mascot.id">
+                <img :src="mascot.image" :alt="mascot.name" class="mascot-image">
+                <h5>{{ mascot.name }}</h5>
+                <div v-if="!isUnlocked(mascot.id)" :data-tooltip="'$'+mascot.cost" class="button" @click="buyReward(mascot)">
+                  <div class="button-wrapper">
+                    <div class="text">Comprar</div>
+                    <span class="icon">
+                      <svg viewBox="0 0 16 16" class="bi bi-cart2" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <p v-else-if="selectedMascot && selectedMascot.id === mascot.id" class="text-success">Seleccionada</p>
+                <button v-else class="btn-select" @click="selectMascot(mascot.id)">Seleccionar</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Fondos de pantalla -->
+          <div class="store-category">
+            <h4 class="category-title">Fons de pantalla:</h4>
+            <div class="store-items">
+              <div class="store-item" v-for="background in backgrounds" :key="background.id">
+                <div :class="background.class" class="background-preview"></div>
+                <h5>{{ background.name }}</h5>
+                <div v-if="!isUnlocked(background.id)" :data-tooltip="'$'+background.cost" class="button" @click="buyReward(background)">
+                  <div class="button-wrapper">
+                    <div class="text">Comprar</div>
+                    <span class="icon">
+                      <svg viewBox="0 0 16 16" class="bi bi-cart2" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <p v-else-if="selectedBackgroundId === background.id" class="text-success">Seleccionat</p>
+                <button v-else class="btn-select" @click="selectBackground(background.id)">Seleccionar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/rewards.js"></script>
+</body>
+</html>

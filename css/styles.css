@@ -1,0 +1,71 @@
+/* Guia d'estil: Decisions de disseny */
+/* Tipografia: Poppins per a una aparença moderna i clara */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  /* Colors: Paleta amb tons suaus i motivadors */
+  :root {
+    --primary: #007bff; /* Blau per a botons i enllaços */
+    --success: #28a745; /* Verd per a accions d'èxit */
+    --light: #f8f9fa; /* Fons clar */
+    --accent: #ff6f61; /* Coral per a detalls motivadors */
+  }
+
+    /* Estils per al botó d'eliminació amb icona */
+  .list-group-item .btn-danger.btn-sm {
+    padding: 4px 8px; /* Redueix el padding per a un botó més compacte */
+    line-height: 1; /* Centra verticalment la icona */
+  }
+
+  .list-group-item .btn-danger .bx-trash {
+    font-size: 1.2rem; /* Mida de la icona */
+    vertical-align: middle; /* Centra la icona dins del botó */
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    min-height: 100vh;
+    border-right: 1px solid #dee2e6;
+  }
+  
+  .nav-link {
+    color: #333;
+    transition: color 0.2s ease-in-out; /* Microinteracció */
+  }
+  
+  .nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    font-weight: bold;
+  }
+  
+  /* Animacions per a microinteraccions */
+  .list-group-item input[type="checkbox"]:checked + span {
+    color: var(--success);
+    transition: color 0.3s ease; /* Microinteracció */
+  }
+  
+  .btn-success:hover {
+    transform: scale(1.05); /* Microinteracció */
+    transition: transform 0.2s ease;
+  }
+  
+  /* Responsivitat */
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      z-index: 1000;
+      width: 200px;
+      transform: translateX(-200px);
+      transition: transform 0.3s ease;
+    }
+  
+    .sidebar.active {
+      transform: translateX(0);
+    }
+  
+    main {
+      margin-left: 0 !important;
+    }
+  }

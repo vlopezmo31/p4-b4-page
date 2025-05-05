@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DopaTask - Tasques</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Boxicons CSS -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <!-- Estils personalitzats -->
+  <link rel="stylesheet" href="css/tasks.css">
+  <!-- Fons personalitzat -->
+  <link rel="stylesheet" href="css/background.css">
+</head>
+<body>
+  <div id="tasksApp" class="container-fluid">
+    <div class="row">
+      <!-- Només mantenim el SidebarComponent -->
+      <sidebar-component current-page="tasks" :selected-mascot="selectedMascot" :mascot-message="mascotMessage"></sidebar-component>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <h2 class="section">Tasques</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3 section">
+          <div>
+            <button class="btn-addtasca" @click="showAddTaskModal">Afegir tasca</button>
+            <button class="btn-addcategoria" @click="showAddCategoryModal">Afegir categoria</button>
+          </div>
+          <span>DopaCoins: {{ points }}</span>
+        </div>
+        <ul class="nav nav-tabs section">
+          <li class="nav-item" v-for="tab in tabs" :key="tab">
+            <a class="nav-link" href="#" @click="activeTab = tab" :class="{ active: activeTab === tab }">{{ tab }}
+              <span class="category-color-indicator" :style="{ backgroundColor: getCategoryColor(tab) }"></span>
+            </a>
+          </li>
+        </ul>
+        <div class="mt-3 section">
+          <div v-if="activeTab === 'general'">
+            <h3>Totes les tasques</h3>
+            <ul class="list-group">
+              <li v-for="task in tasks" :key="task.id" class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <div class="checkbox-wrapper-19">
+                    <input :id="'task-' + task.id" type="checkbox" v-model="task.completed" @change="updatePoints(task)">
+                    <label class="check-box" :for="'task-' + task.id"></label>
+                  </div>
+                  <span class="task-text" :class="{ 'text-decoration-line-through': task.completed }">{{ task.name }}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <span>{{ task.score }} DopaCoins - {{ task.category }}</span>
+                  <span class="category-color-indicator" :style="{ backgroundColor: getCategoryColor(task.category) }"></span>
+                  <button class="btn-eliminar" @click="deleteTask(task.id)">
+                    <i class='bx bx-trash'></i>
+                  </button>
+                </div>
+              </li>
+              <li v-if="!tasks.length" class="list-group-item text-center text-muted">
+                No hi ha tasques disponibles.
+              </li>
+            </ul>
+          </div>
+          <div v-else>
+            <h3>Tasques per {{ activeTab }}</h3>
+            <ul class="list-group">
+              <li v-for="task in filteredTasks" :key="task.id" class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <div class="checkbox-wrapper-19">
+                    <input :id="'task-' + task.id" type="checkbox" v-model="task.completed" @change="updatePoints(task)">
+                    <label class="check-box" :for="'task-' + task.id"></label>
+                  </div>
+                  <span class="task-text" :class="{ 'text-decoration-line-through': task.completed }">{{ task.name }}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <span>{{ task.score }} DopaCoins </span>
+                  <span class="category-color-indicator" :style="{ backgroundColor: getCategoryColor(task.category) }"></span>
+                  <button class="btn-eliminar" @click="deleteTask(task.id)">
+                    <i class='bx bx-trash'></i>
+                  </button>
+                </div>
+              </li>
+              <li v-if="!filteredTasks.length" class="list-group-item text-center text-muted">
+                No hi ha tasques en aquesta categoria.
+              </li>
+            </ul>
+          </div>
+        </div>
+      
+        <div class="container noselect" v-if="dailyChallenge">
+          <div class="canvas">
+            <div class="tracker tr-1"></div>
+            <div class="tracker tr-2"></div>
+            <div class="tracker tr-3"></div>
+            <div class="tracker tr-4"></div>
+            <div class="tracker tr-5"></div>
+            <div class="tracker tr-6"></div>
+            <div class="tracker tr-7"></div>
+            <div class="tracker tr-8"></div>
+            <div class="tracker tr-9"></div>
+            <div class="tracker tr-10"></div>
+            <div class="tracker tr-11"></div>
+            <div class="tracker tr-12"></div>
+            <div class="tracker tr-13"></div>
+            <div class="tracker tr-14"></div>
+            <div class="tracker tr-15"></div>
+            <div class="tracker tr-16"></div>
+            <div class="tracker tr-17"></div>
+            <div class="tracker tr-18"></div>
+            <div class="tracker tr-19"></div>
+            <div class="tracker tr-20"></div>
+            <div class="tracker tr-21"></div>
+            <div class="tracker tr-22"></div>
+            <div class="tracker tr-23"></div>
+            <div class="tracker tr-24"></div>
+            <div class="tracker tr-25"></div>
+            <div id="card">
+              <p id="prompt">
+                <span v-if="challengeCompleted">✔ Repte completat!</span>
+                <span v-else>Repte Diari</span>
+              </p>
+              <div class="title">
+                <span v-if="challengeCompleted">Repte completat! Has obtingut DopaCoins extra</span>
+                <span v-else>{{ dailyChallenge }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Modals -->
+      <div class="modal fade" id="addTaskModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Afegir tasca</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="taskName" class="form-label">Nom de la tasca</label>
+                  <input type="text" class="form-control" id="taskName" v-model="newTask.name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="taskScore" class="form-label">DopaCoins</label>
+                  <input type="number" class="form-control" id="taskScore" v-model.number="newTask.score" required>
+                </div>
+                <div class="mb-3">
+                  <label for="taskCategory" class="form-label">Categoria</label>
+                  <select class="form-control" id="taskCategory" v-model="newTask.category" required>
+                    <option value="" disabled>Selecciona una categoria</option>
+                    <option v-for="cat in categories" :key="cat.name" :value="cat.name">{{ cat.name }}</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btntancar" data-bs-dismiss="modal">Tancar</button>
+              <button type="button" class="btndesar" @click="addTask">Desar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Afegir categoria</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="newCategoryName" class="form-label">Nom de la categoria</label>
+                  <input type="text" class="form-control" id="newCategoryName" v-model="newCategory.name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="categoryColor" class="form-label">Color de la categoria</label>
+                  <input type="color" class="form-control form-control-color" id="categoryColor" v-model="newCategory.color" required>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btntancar" data-bs-dismiss="modal">Tancar</button>
+              <button type="button" class="btndesar" @click="addCategory">Afegir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/tasks.js"></script>
+</body>
+</html>

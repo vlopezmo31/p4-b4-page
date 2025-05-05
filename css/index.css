@@ -1,0 +1,212 @@
+/* Estils generals per a la pàgina de benvinguda */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #74ebd5, #acb6e5);
+  position: relative;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: contain; /* o usa cover si quieres que se escale */
+  background-color: white;  /* color de fondo si sobra espacio */
+}
+
+
+
+/* Contenidor principal */
+.container-fluid {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estils per a la pantalla de benvinguda */
+.splash-screen {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Fons amb efecte d'ones */
+.wave-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('img/wave-background.svg') no-repeat center center;
+  background-size: cover;
+  opacity: 0.3;
+  z-index: 1;
+}
+
+/* Efecte de lluentor (lens flare) */
+.splash-screen::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 70%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 10%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0.7;
+  z-index: 2;
+  pointer-events: none;
+  animation: flarePulse 3s infinite ease-in-out;
+}
+
+/* Efecte secundari de lluentor (per simular reflexos addicionals) */
+.splash-screen::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 60%;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(173, 216, 230, 0.5) 10%, rgba(173, 216, 230, 0) 70%);
+  border-radius: 50%;
+  filter: blur(15px);
+  opacity: 0.5;
+  z-index: 2;
+  pointer-events: none;
+  animation: flarePulse 4s infinite ease-in-out;
+}
+
+/* Animació per donar vida a l'efecte de lluentor */
+@keyframes flarePulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* Estils per al logo */
+.splash-logo {
+  width: 400px;
+  height: auto;
+  z-index: 3;
+}
+
+/* Estils per al contingut central */
+.splash-content {
+  position: relative;
+  z-index: 3;
+}
+
+/* Estils per al botó "Comença a Planificar!" amb animació */
+.custom-button {
+  position: relative;
+  padding: 42px 54px; /* Augmentem el padding perquè el botó sigui més gran */
+  border-radius: 7px;
+  border: 1px solid rgb(61, 106, 255);
+  font-size: 1.25rem; /* Augmentem la mida de la font perquè coincideixi amb l'estil anterior */
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  text-decoration: none; /* Eliminem el subratllat de l'enllaç */
+  display: inline-block; /* Necessari perquè l'enllaç es comporti com un botó */
+  z-index: 3; /* Assegurem que el botó estigui per sobre d'altres elements visuals */
+}
+
+.custom-button:hover {
+  background: rgb(61, 106, 255);
+  box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+
+.custom-button:hover::before {
+  -webkit-animation: sh02 0.5s 0s linear;
+  -moz-animation: sh02 0.5s 0s linear;
+  animation: sh02 0.5s 0s linear;
+}
+
+.custom-button::before {
+  content: '';
+  display: block;
+  width: 0px;
+  height: 86%;
+  position: absolute;
+  top: 7%;
+  left: 0%;
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 0 50px 30px #fff;
+  -webkit-transform: skewX(-20deg);
+  -moz-transform: skewX(-20deg);
+  -ms-transform: skewX(-20deg);
+  -o-transform: skewX(-20deg);
+  transform: skewX(-20deg);
+}
+
+@keyframes sh02 {
+  from {
+    opacity: 0;
+    left: 0%;
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    left: 100%;
+  }
+}
+
+.custom-button:active {
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: box-shadow 0.2s ease-in;
+  -moz-transition: box-shadow 0.2s ease-in;
+  transition: box-shadow 0.2s ease-in;
+}
+
+/* Ajustos responsius */
+@media (max-width: 768px) {
+  .splash-logo {
+    width: 150px;
+    margin: 1rem;
+  }
+
+  .custom-button {
+    padding: 10px 20px; /* Reduïm el padding per a pantalles petites */
+    font-size: 1rem; /* Reduïm la mida de la font */
+  }
+
+  .splash-screen::before,
+  .splash-screen::after {
+    width: 150px;
+    height: 150px;
+  }
+
+  .splash-screen::after {
+    width: 80px;
+    height: 80px;
+  }
+}

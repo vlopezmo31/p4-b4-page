@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DopaTask - Hàbits</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Boxicons CSS -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <!-- Estils personalitzats -->
+  <link rel="stylesheet" href="css/habits.css">
+  <!-- Fons personalitzat -->
+  <link rel="stylesheet" href="css/background.css">
+</head>
+<body>
+  <div id="habitsApp" class="container-fluid">
+    <div class="row">
+      <!-- Només mantenim el SidebarComponent -->
+      
+      <sidebar-component current-page="habits" :selected-mascot="selectedMascot" :mascot-message="mascotMessage"></sidebar-component>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="d-flex justify-content-between align-items-center section mb-3">
+          <h2 class="m-0">Hàbits</h2>
+          <div class="form-check form-switch notificacions-switch">
+            <input class="form-check-input" type="checkbox" v-model="notificationsEnabled" id="notificationsSwitch">
+            <label class="form-check-label" for="notificationsSwitch">Notificacions</label>
+          </div>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-3 section">
+          <div>
+            <button class="btn success" data-bs-toggle="modal" data-bs-target="#addHabitModal">+ Afegir hàbit</button>
+          </div>
+          
+        </div>
+        <ul class="list-group mb-3 section">
+          <li v-for="(habit, index) in habits" :key="index" class="list-group-item d-flex justify-content-between align-items-center" :class="{ 'habit-completed': habit.completed }">
+            <div class="d-flex align-items-center">
+              <div class="checkbox-wrapper-19">
+                <input :id="'habit-' + index" type="checkbox" v-model="habit.completed" @change="checkHabitStreak(index)">
+                <label class="check-box" :for="'habit-' + index"></label>
+              </div>
+              <span class="task-text" :class="{ 'text-decoration-line-through': habit.completed }">{{ habit.name }}</span>
+              
+            </div>
+            <div class="d-flex align-items-center">
+              <span v-if="habit.streak > 0" class="me-2">🔥 {{ habit.streak }} dies</span>
+              <button class="btn-edit" @click="editHabit(index)" data-bs-toggle="modal" data-bs-target="#editHabitModal"><i class='bx bx-edit'></i></button>
+              <button class="btn-delete" @click="deleteHabit(index)"><i class='bx bx-trash'></i></button>
+            </div>
+          </li>
+        </ul>
+     
+        
+
+        <!-- Modal per afegir hàbit -->
+        <div class="modal fade" id="addHabitModal" tabindex="-1" aria-labelledby="addHabitModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addHabitModalLabel">Afegir Nou Hàbit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="habitName" class="form-label">Nom de l’hàbit</label>
+                  <input type="text" class="form-control" id="habitName" v-model="newHabitName" placeholder="Ex: Estudiar 1 hora al dia">
+                </div>
+                <div class="mb-3">
+                  <label for="habitReminder" class="form-label">Hora del recordatori (opcional)</label>
+                  <input type="time" class="form-control" id="habitReminder" v-model="newHabitReminder">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn-tancar" data-bs-dismiss="modal">Tancar</button>
+                <button type="button" class="btn-add" @click="addHabit" data-bs-dismiss="modal">Afegir</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal per editar hàbit -->
+        <div class="modal fade" id="editHabitModal" tabindex="-1" aria-labelledby="editHabitModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editHabitModalLabel">Editar Hàbit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="editHabitName" class="form-label">Nom de l’hàbit</label>
+                  <input type="text" class="form-control" id="editHabitName" v-model="editHabitName">
+                </div>
+                <div class="mb-3">
+                  <label for="editHabitReminder" class="form-label">Hora del recordatori (opcional)</label>
+                  <input type="time" class="form-control" id="editHabitReminder" v-model="editHabitReminder">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn-tancar" data-bs-dismiss="modal">Tancar</button>
+                <button type="button" class="btn-guardar" @click="saveHabit" data-bs-dismiss="modal">Guardar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Canvas Confetti per animacions -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <script src="js/app.js"></script>
+  <script src="js/habits.js"></script>
+</body>
+</html>
