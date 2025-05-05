@@ -128,7 +128,7 @@ const SidebarComponent = {
       </ul>
       <div class="spacer"></div>
       <div class="mascot-display">
-        <img :src="selectedMascot && selectedMascot.image ? selectedMascot.image : '/img/mascots/notMascot.jpg'" 
+        <img :src="selectedMascot && selectedMascot.image ? selectedMascot.image : '/img/mascots/girraffe.jpg'" 
              :alt="selectedMascot && selectedMascot.name ? selectedMascot.name : 'No Mascot'" 
              class="mascot-image">
         <p class="mascot-name">{{ selectedMascot && selectedMascot.name ? selectedMascot.name : 'No mascota' }}</p>
