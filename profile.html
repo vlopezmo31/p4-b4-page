@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DopaTask - Recompenses</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Boxicons CSS -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Estils personalitzats -->
+  <link rel="stylesheet" href="css/profile.css">
+  <!-- Fons personalitzat -->
+  <link rel="stylesheet" href="css/background.css">
+</head>
+<body>
+  <div id="rewardsApp" class="container-fluid">
+    <div class="row">
+      <!-- Sidebar Component -->
+      <sidebar-component
+        current-page="profile"
+        :selected-mascot="selectedMascot"
+        :mascot-message="mascotMessage"
+        :user-name="userName"
+      ></sidebar-component>
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- User Profile and Points Summary -->
+        <div class="section">
+          <div class="d-flex align-items-center">
+            <div class="drop-zone" @dragover.prevent="handleDragOver" @dragenter.prevent="handleDragEnter" @dragleave.prevent="handleDragLeave" @drop.prevent="handleDrop" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+              <img :src="profileImage" alt="User Icon" class="rounded-circle">
+              <div class="drop-zone-text" v-show="isDragging || isHovering">
+                {{ profileImage === '/img/placeholder_user_icon.png' ? 'Arrossegar i deixar anar una imatge' : 'Arrossega i deixa anar per canviar' }}
+              </div>
+            </div>
+            <div class="ms-3">
+              <div class="d-flex align-items-center">
+                <!-- Mostrar el nombre o el texto por defecto en catalán -->
+                <h5 v-if="!editingName" @click="editName" style="cursor: pointer;">
+                  {{ userName == null? 'Pulsa per canviar el teu nom' : userName }}
+                </h5>
+
+                <!-- Input para editar el nombre -->
+                <input
+                  v-else
+                  type="text"
+                  v-model="tempName"
+                  class="form-control me-2"
+                  style="width: auto; display: inline-block;"
+                >
+
+                <!-- Botón para guardar -->
+                <button v-if="editingName" class="btn-addtasca" @click="saveName">
+                  Desar
+                </button>
+
+              </div>
+              <p><i class="fas fa-star"></i> Total DopaCoins: <span class="badge bg-primary">{{ points }} Dopacoins</span></p>
+              <p>Racha: 3 setmanes</p>
+            
+            </div>
+          </div>
+        </div>
+
+        <!-- Objective Section -->
+        <div class="section position-relative">
+          <div>
+            <h4>Objectiu: {{ userGoal }} DopaCoins</h4>
+            <div class="progress mt-3" style="height: 30px;">
+              <div class="progress-bar" role="progressbar" :style="{ width: goalProgress + '%' }" :aria-valuenow="goalProgress" aria-valuemin="0" aria-valuemax="100">
+                {{ points }} DopaCoins
+              </div>
+            </div>
+          </div>
+          <div class="position-absolute bottom-0 end-0">
+            <p>Data límit: {{ goalDate }}</p>
+          </div>
+          <button class="btn-addtasca me-2 mt-3" @click="showGoalModal">Editar</button>
+        </div>
+
+        <!-- Goal Modal -->
+        <div class="modal fade" id="goalModal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Establir objectiu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="mb-3">
+                    <label for="goalPoints" class="form-label">Objectiu (DopaCoins)</label>
+                    <input type="number" class="form-control" id="goalPoints" v-model.number="newGoal.points" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="goalDate" class="form-label">Data límit</label>
+                    <input type="text" class="form-control" id="goalDate" v-model="newGoal.date" placeholder="ex. 01/05/25" required>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btntancar" data-bs-dismiss="modal">Tancar</button>
+                <button type="button" class="btndesar" @click="saveGoal">Desar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly/Monthly Performance Graph -->
+        <div class="section">
+          <h3>Estadístiques de rendiment</h3>
+          <div class="chart-controls mb-3 text-center">
+            <button class="btn-addtasca" :class="{ active: chartView === 'weekly' }" :disabled="chartView === 'weekly'" @click="updateChart('weekly')">Setmanal</button>
+            <button class="btn-addtasca" :class="{ active: chartView === 'monthly' }" :disabled="chartView === 'monthly'" @click="updateChart('monthly')">Mensual</button>
+          </div>
+          <canvas id="performanceChart" style="max-width: 600px; margin: 0 auto;"></canvas>
+        </div>
+
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

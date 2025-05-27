@@ -16,6 +16,13 @@
   --color-senate: #84a6f0;
 }
 
+.user-name {
+  margin-top: 5px;
+  font-size: 14px;
+  color: var(--color-quinary);
+  font-weight: 500;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
@@ -737,7 +744,7 @@ body.dark .mode-toggle .switch::before {
 }
 
 .btntancar {
-  background-color: #D3D3D3;
+  background-color: var(--color-primary);
   border: none;
   color: #000;
   font-family: 'Poppins', sans-serif;

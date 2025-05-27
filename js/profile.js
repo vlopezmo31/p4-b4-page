@@ -19,11 +19,7 @@ if (document.getElementById('rewardsApp')) {
           rewards: sharedData.rewards,
           unlockedRewards: loadFromLocalStorage('unlockedRewards', [1]),
           selectedBackgroundId: loadFromLocalStorage('selectedBackground', 1),
-          rewardsPers: loadFromLocalStorage('rewardsPers', [
-            { id: 1, name: 'Comprar Bolso', score: 10 },
-          ]),
           chartView: 'weekly',
-          newRewardPerson: { name: '', score: 0, completed: false },
           chart: null,
           mascotMessage: '',
           isDragging: false,
@@ -63,27 +59,6 @@ if (document.getElementById('rewardsApp')) {
             this.editingName = false;
           } else {
             alert('Si us plau, introdueix un nom vàlid.');
-          }
-        },
-        showaddRewardPerson() {
-          var myModal = new bootstrap.Modal(document.getElementById('addRewardPerson'));
-          myModal.show();
-        },
-        isEnoughCoins(score) {
-          return this.points >= score;
-        },
-        addRewardPerson() {
-          if (this.newRewardPerson.name && this.newRewardPerson.score > 0) {
-            const newId = this.rewardsPers.length ? Math.max(...this.rewardsPers.map(t => t.id)) + 1 : 1;
-            this.rewardsPers.push({ id: newId, ...this.newRewardPerson, completed: false });
-            this.newRewardPerson = { name: '', score: 0, completed: false }; // Reset form
-            saveToLocalStorage('rewardsPers', this.rewardsPers);
-            var myModal = bootstrap.Modal.getInstance(document.getElementById('addRewardPerson'));
-            if (myModal) {
-              myModal.hide();
-            }
-          } else {
-            alert('Si us plau, completa tots els camps i assegura\'t que la puntuació sigui major a 0.');
           }
         },
         //gestio de l'edicio de l'objectiu de punts i data limit
@@ -393,7 +368,6 @@ if (document.getElementById('rewardsApp')) {
       mounted() {
         applyBackground();
         this.initChart();
-        
       }
     }).mount('#rewardsApp');
   }

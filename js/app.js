@@ -6,6 +6,7 @@
  * @returns 
  */
 function loadFromLocalStorage(key, defaultValue) {
+  
   const data = localStorage.getItem(key);
   return data ? JSON.parse(data) : defaultValue;
 }
@@ -35,6 +36,9 @@ function applyBackground() {
     { id: 5, name: 'Jirafa', cost: 20, type: 'mascot', image: 'img/mascots/giraffe.jpg' },
     { id: 6, name: 'Zebra', cost: 30, type: 'mascot', image: 'img/mascots/zebra.jpg' },
     { id: 7, name: 'Porc', cost: 40, type: 'mascot', image: 'img/mascots/pig.jpg' },
+    { id: 8, name: 'obrera', cost: 60, type: 'mascot', image: 'img/mascots/obrera.jpg' },
+    { id: 9, name: 'Mago', cost: 70, type: 'mascot', image: 'img/mascots/mago.jpg' },
+    { id: 10, name: 'Canguro', cost: 80, type: 'mascot', image: 'img/mascots/canguro.jpg' },
   ];
   const selected = rewards.find(r => r.id === selectedBackgroundId);
   const className = selected ? selected.class : 'bg-default';
@@ -71,6 +75,9 @@ function applyBackgroundIndex() {
     { id: 5, name: 'Jirafa', cost: 20, type: 'mascot', image: 'img/mascots/giraffe.jpg' },
     { id: 6, name: 'Zebra', cost: 30, type: 'mascot', image: 'img/mascots/zebra.jpg' },
     { id: 7, name: 'Porc', cost: 40, type: 'mascot', image: 'img/mascots/pig.jpg' },
+    { id: 8, name: 'obrera', cost: 60, type: 'mascot', image: 'img/mascots/obrera.jpg' },
+    { id: 9, name: 'Mago', cost: 70, type: 'mascot', image: 'img/mascots/mago.jpg' },
+    { id: 10, name: 'Canguro', cost: 80, type: 'mascot', image: 'img/mascots/canguro.jpg' },
   ];
   const selected = rewards.find(r => r.id === selectedBackgroundId);
   const className = selected ? selected.class : 'bg-default';
@@ -95,7 +102,7 @@ function applyBackgroundIndex() {
  * - L'interruptor del mode fosc/clar
  */
 const SidebarComponent = {
-  props: ['currentPage', 'selectedMascot', 'mascotMessage'],
+  props: ['currentPage', 'selectedMascot', 'mascotMessage', 'userName'],
   template: `
     <nav class="sidebar">
       <div class="logo-menu">
@@ -128,10 +135,12 @@ const SidebarComponent = {
       </ul>
       <div class="spacer"></div>
       <div class="mascot-display">
-        <img :src="selectedMascot && selectedMascot.image ? selectedMascot.image : '/img/mascots/notMascot.jpg'" 
-             :alt="selectedMascot && selectedMascot.name ? selectedMascot.name : 'No Mascot'" 
-             class="mascot-image">
-        <p class="mascot-name">{{ selectedMascot && selectedMascot.name ? selectedMascot.name : 'No mascota' }}</p>
+        <a href="profile.html" title="Go to profile">
+          <img :src="selectedMascot && selectedMascot.image ? selectedMascot.image : '/img/mascots/predet.jpg'" 
+               :alt="selectedMascot && selectedMascot.name ? selectedMascot.name : 'No Mascot'" 
+               class="mascot-image">
+        </a>
+        <p class="user-name">{{ userName ? userName : 'Perfil' }}</p>
         <div v-if="mascotMessage" class="speech-bubble">
           {{ mascotMessage }}
         </div>
@@ -165,6 +174,10 @@ const sharedData = Vue.reactive({
     { id: 5, name: 'Jirafa', cost: 20, type: 'mascot', image: 'img/mascots/giraffe.jpg' },
     { id: 6, name: 'Zebra', cost: 30, type: 'mascot', image: 'img/mascots/zebra.jpg' },
     { id: 7, name: 'Porc', cost: 40, type: 'mascot', image: 'img/mascots/pig.jpg' },
+    { id: 8, name: 'obrera', cost: 60, type: 'mascot', image: 'img/mascots/obrera.jpg' },
+    { id: 9, name: 'Mago', cost: 70, type: 'mascot', image: 'img/mascots/mago.jpg' },
+    { id: 10, name: 'Canguro', cost: 80, type: 'mascot', image: 'img/mascots/canguro.jpg' },
+    
   ],
   selectedMascotId: loadFromLocalStorage('selectedMascot', null),
   getSelectedMascot() {

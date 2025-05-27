@@ -19,90 +19,18 @@
   <div id="rewardsApp" class="container-fluid">
     <div class="row">
       <!-- Sidebar Component -->
-      <sidebar-component current-page="rewards" :selected-mascot="selectedMascot" :mascot-message="mascotMessage"></sidebar-component>
-
+      <sidebar-component
+        current-page="rewards"
+        :selected-mascot="selectedMascot"
+        :mascot-message="mascotMessage"
+        :user-name="userName"
+      ></sidebar-component>
       <!-- Main Content -->
       <main class="main-content">
-        <!-- User Profile and Points Summary -->
-        <div class="section">
-          <div class="d-flex align-items-center">
-            <div class="drop-zone" @dragover.prevent="handleDragOver" @dragenter.prevent="handleDragEnter" @dragleave.prevent="handleDragLeave" @drop.prevent="handleDrop" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
-              <img :src="profileImage" alt="User Icon" class="rounded-circle">
-              <div class="drop-zone-text" v-show="isDragging || isHovering">
-                {{ profileImage === '/img/placeholder_user_icon.png' ? 'Arrossegar i deixar anar una imatge' : 'Arrossega i deixa anar per canviar' }}
-              </div>
-            </div>
-            <div class="ms-3">
-              <div class="d-flex align-items-center">
-                <h5 v-if="!editingName">{{ userName }}</h5>
-                <input v-else type="text" v-model="tempName" class="form-control me-2" style="width: auto;">
-                <button v-if="!editingName" class="btn-edit" @click="editName">Editar</button>
-                <button v-else class="btn-guardar" @click="saveName">Desar</button>
-              </div>
-              <p><i class="fas fa-star"></i> Total DopaCoins: <span class="badge bg-primary">{{ points }} Dopacoins</span></p>
-              <p>Racha: 3 setmanes</p>
-            
-            </div>
-          </div>
-        </div>
-
-        <!-- Objective Section -->
-        <div class="section position-relative">
-          <div>
-            <h4>Objectiu: {{ userGoal }} DopaCoins</h4>
-            <div class="progress mt-3" style="height: 30px;">
-              <div class="progress-bar" role="progressbar" :style="{ width: goalProgress + '%' }" :aria-valuenow="goalProgress" aria-valuemin="0" aria-valuemax="100">
-                {{ points }} DopaCoins
-              </div>
-            </div>
-          </div>
-          <div class="position-absolute bottom-0 end-0">
-            <p>Data límit: {{ goalDate }}</p>
-          </div>
-          <button class="btn-editar" @click="showGoalModal">Editar</button>
-        </div>
-
-        <!-- Goal Modal -->
-        <div class="modal fade" id="goalModal" tabindex="-1">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Establir objectiu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                <form>
-                  <div class="mb-3">
-                    <label for="goalPoints" class="form-label">Objectiu (DopaCoins)</label>
-                    <input type="number" class="form-control" id="goalPoints" v-model.number="newGoal.points" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="goalDate" class="form-label">Data límit</label>
-                    <input type="text" class="form-control" id="goalDate" v-model="newGoal.date" placeholder="ex. 01/05/25" required>
-                  </div>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn-close" data-bs-dismiss="modal">Tancar</button>
-                <button type="button" class="btn-desar" @click="saveGoal">Desar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Weekly/Monthly Performance Graph -->
-        <div class="section">
-          <h3>Estadístiques de rendiment</h3>
-          <div class="chart-controls mb-3 text-center">
-            <button class="btn-filtre1" :class="{ active: chartView === 'weekly' }" :disabled="chartView === 'weekly'" @click="updateChart('weekly')">Setmanal</button>
-            <button class="btn-filtre2" :class="{ active: chartView === 'monthly' }" :disabled="chartView === 'monthly'" @click="updateChart('monthly')">Mensual</button>
-          </div>
-          <canvas id="performanceChart" style="max-width: 600px; margin: 0 auto;"></canvas>
-        </div>
-
         <!-- Store Section -->
         <div class="section">
           <h3>Items a desbloquejar</h3>
+          <p><i class="fas fa-star"></i> Total DopaCoins: <span class="badge bg-primary">{{ points }} Dopacoins</span></p>
           <!-- Mascotes -->
           <div class="store-category">
             <h4 class="category-title">Mascotes:</h4>
@@ -148,8 +76,54 @@
               </div>
             </div>
           </div>
-        </div>
+
+          <!-- Recompenses Personalitzades -->
+          <div class="store-category">
+            <h4 class="category-title">Metes Personalitzades:</h4>
+            <button class="btn-addtasca" @click="showaddRewardPerson">Afegir una meta</button>
+            <ul class="list-group mt-3">
+              <li v-for="reward in rewardsPers" :key="reward.id" class="list-group-item d-flex justify-content-between align-items-center" :class="{ 'disabled-reward': !isEnoughCoins(reward.score) }">
+                <div class="d-flex align-items-center">
+                  <span class="task-text" :class="{ 'text-decoration-line-through': reward.completed, 'text-muted': !isEnoughCoins(reward.score) }">
+                    <span v-if="isEnoughCoins(reward.score)">Has desbloquejat: {{ reward.name }}</span>
+                    <span v-else>Necessites {{ reward.score }} DopaCoins per desbloquejar la meta: {{ reward.name }}</span>
+                  </span>
+                </div>
+              </li>
+              <li v-if="!rewardsPers.length" class="list-group-item text-center text-muted">
+                No hi ha recompenses personalitzades disponibles.
+              </li>
+            </ul>
+          </div>
       </main>
+
+      <!-- Modal per afegir recompensa personalitzada -->
+      <div class="modal fade" id="addRewardPerson" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Afegir recompensa personalitzada</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <form @submit.prevent="addRewardPerson">
+                <div class="mb-3">
+                  <label for="taskName" class="form-label">Recompensa personalitzada</label>
+                  <input type="text" class="form-control" id="taskName" v-model="newRewardPerson.name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="taskScore" class="form-label">DopaCoins requerits</label>
+                  <input type="number" class="form-control" id="taskScore" v-model.number="newRewardPerson.score" required>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btntancar" data-bs-dismiss="modal">Tancar</button>
+                  <button type="submit" class="btndesar">Desar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

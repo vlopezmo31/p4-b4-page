@@ -16,6 +16,7 @@ if (document.getElementById('habitsApp')) {
             { name: 'Treure al gos al carrer', completed: false, streak: 2, reminder: '18:00' },
           ]),
           notificationsEnabled: loadFromLocalStorage('notificationsEnabled', true),
+          userName: loadFromLocalStorage('userName'),
           mascotMessage: '',
           newHabitName: '',
           newHabitReminder: null,
