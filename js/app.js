@@ -136,7 +136,7 @@ const SidebarComponent = {
       <div class="spacer"></div>
       <div class="mascot-display">
         <a href="profile.html" title="Go to profile">
-          <img :src="selectedMascot && selectedMascot.image ? selectedMascot.image : '/img/mascots/predet.jpg'" 
+          <img :src="selectedMascot && selectedMascot.image ? selectedMascot.image : 'img/mascots/predet.jpg'" 
                :alt="selectedMascot && selectedMascot.name ? selectedMascot.name : 'No Mascot'" 
                class="mascot-image">
         </a>
